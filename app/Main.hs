@@ -2,4 +2,8 @@ module Main where
 
 import TGApi.Lib
 
-main = getUpdates
+main = do
+--    botInfo <- getBotInfo
+--    print botInfo
+    updates <- getUpdates
+    print updates

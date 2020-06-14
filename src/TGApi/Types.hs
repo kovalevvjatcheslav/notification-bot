@@ -2,10 +2,11 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module TGApi.Types
-    ( TGResponse,
+    ( TGResponse(result),
       GetUpdatesParameters(..),
       BotInfo,
-      Update
+      Update(update_id, message),
+      Message(text)
     ) where
 
 import Data.Aeson.Types
@@ -52,7 +53,7 @@ data GetUpdatesParameters = GetUpdatesParameters {
 instance ToJSON GetUpdatesParameters
 instance FromJSON GetUpdatesParameters
 
---updateInfo
+--updates
 --{"ok":true,
 -- "result":[
 --    {"update_id":973058112,

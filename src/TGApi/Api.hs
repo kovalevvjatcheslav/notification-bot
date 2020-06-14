@@ -1,7 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE DeriveGeneric #-}
 
-module TGApi.Lib
+module TGApi.Api
     ( getBotInfo,
       getUpdates
     ) where
@@ -16,30 +16,29 @@ import TGApi.Types
 
 apiUrl = "https://api.telegram.org/bot"
 
-getBotInfo :: IO (TGResponse BotInfo)
+getBotInfo :: IO BotInfo
 getBotInfo = do
     token <- getEnv "TOKEN"
     request <- parseRequest $ apiUrl ++ token ++ "/getMe"
     response <- httpJSON request :: IO (Response (TGResponse BotInfo))
 
-    putStrLn $ "The status code was: " ++
-               show (getResponseStatusCode response)
-    print $ getResponseHeader "Content-Type" response
+--    putStrLn $ "The status code was: " ++
+--               show (getResponseStatusCode response)
+--    print $ getResponseHeader "Content-Type" response
     let botInfoResponse = getResponseBody response
-    return botInfoResponse
+    return $ result botInfoResponse
 
-getUpdates :: IO (TGResponse [Update])
-getUpdates = do
+getUpdates :: GetUpdatesParameters -> IO [Update]
+getUpdates updateParams = do
     token <- getEnv "TOKEN"
     initRequest <- parseRequest $ apiUrl ++ token ++ "/getUpdates"
-    let params = GetUpdatesParameters {offset = Just 973058113, limit = Nothing, timeout = Nothing,
-                                       allowed_updates = Nothing}
-    let request = setRequestBodyJSON params $ setRequestMethod "POST" initRequest
+    let proxy = Proxy "127.0.0.1" 9051
+    let request = setRequestProxy (Just proxy) $ setRequestBodyJSON updateParams $ setRequestMethod "POST" initRequest
     response <- httpJSON request :: IO (Response (TGResponse [Update]))
 
-    putStrLn $ "The status code was: " ++
-               show (getResponseStatusCode response)
-    print $ getResponseHeader "Content-Type" response
-    let updates = getResponseBody response
-    return updates
+--    putStrLn $ "The status code was: " ++
+--               show (getResponseStatusCode response)
+--    print $ getResponseHeader "Content-Type" response
+    let updatesResponse = getResponseBody response
+    return $ result updatesResponse
 

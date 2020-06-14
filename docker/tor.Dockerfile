@@ -11,3 +11,5 @@ RUN apt-get update \
     && apt-get install -y curl
 
 COPY docker/torrc /etc/tor/torrc
+
+ENTRYPOINT service tor start && tail -f /dev/null
